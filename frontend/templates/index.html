@@ -1,0 +1,720 @@
+{% extends "base.html" %}
+{% block title %}SmartTally AI - AI Platform for CAs and Tax Professionals{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-right:10px">
+                <i class="bi bi-robot text-white" style="font-size:20px"></i>
+            </div>
+            <span class="fw-bold text-white fs-5">SmartTally AI</span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="bi bi-list text-white fs-4"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link text-white" href="#features">Features</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#gst">GST</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#tally">Tally</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#pricing">Pricing</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#testimonials">Testimonials</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#contact">Contact</a></li>
+            </ul>
+            <div class="d-flex gap-2">
+                <a href="/login" class="btn btn-glass btn-sm px-4">Login</a>
+                <a href="/register" class="btn btn-primary-gradient btn-sm px-4">Sign Up Free</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section d-flex align-items-center" id="hero">
+    <div class="hero-blob blob-1"></div>
+    <div class="hero-blob blob-2"></div>
+    <div class="hero-blob blob-3"></div>
+    <div class="container position-relative" style="z-index:2">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-white mb-5 mb-lg-0">
+                <div class="d-inline-block px-3 py-1 rounded-pill mb-4" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2)">
+                    <small><i class="bi bi-stars me-1"></i> AI-Powered Automation</small>
+                </div>
+                <h1 class="display-3 fw-900 mb-4 gradient-text" style="line-height:1.1">
+                    AI Platform for CAs and Tax Professionals
+                </h1>
+                <p class="fs-5 mb-4" style="opacity:0.9;line-height:1.8">
+                    Automate your accounting with AI. Upload invoices, extract data with OCR, auto-generate Tally entries, calculate GST — all in one platform.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mb-5">
+                    <a href="#contact" class="btn btn-glass px-4 py-3">
+                        <i class="bi bi-telephone me-2"></i>Request Callback
+                    </a>
+                    <a href="/register" class="btn px-4 py-3 fw-semibold" style="background:white;color:#4F46E5;border-radius:12px">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Sign Up Now
+                    </a>
+                </div>
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <span style="opacity:0.9">No Credit Card Required</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <span style="opacity:0.9">14-Day Free Trial</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <span style="opacity:0.9">Tally Prime Ready</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="glass-card p-4" style="border-radius:24px">
+                    <div class="bg-dark rounded-3 p-4" style="border-radius:16px!important">
+                        <div class="d-flex gap-2 mb-3">
+                            <div style="width:12px;height:12px;border-radius:50%;background:#FF5F57"></div>
+                            <div style="width:12px;height:12px;border-radius:50%;background:#FFBD2E"></div>
+                            <div style="width:12px;height:12px;border-radius:50%;background:#28CA41"></div>
+                        </div>
+                        <div class="text-white" style="font-family:monospace;font-size:0.85rem">
+                            <p class="mb-1"><span style="color:#A78BFA">$</span> smarttally process invoice.pdf</p>
+                            <p class="mb-1" style="color:#10B981"><i class="bi bi-check2 me-1"></i>OCR Processing... Done</p>
+                            <p class="mb-1" style="color:#10B981"><i class="bi bi-check2 me-1"></i>AI Data Extraction... Done</p>
+                            <p class="mb-1" style="color:#60A5FA">  Vendor: Amazon India Pvt Ltd</p>
+                            <p class="mb-1" style="color:#60A5FA">  GSTIN: 29AABCU9603R1ZM</p>
+                            <p class="mb-1" style="color:#60A5FA">  Amount: ₹24,500.00</p>
+                            <p class="mb-1" style="color:#60A5FA">  GST: CGST ₹2,205 + SGST ₹2,205</p>
+                            <p class="mb-1" style="color:#10B981"><i class="bi bi-check2 me-1"></i>Ledger: Purchase Account</p>
+                            <p class="mb-1" style="color:#10B981"><i class="bi bi-check2 me-1"></i>Voucher: Purchase Voucher Created</p>
+                            <p class="mb-1" style="color:#F59E0B"><i class="bi bi-check2 me-1"></i>Tally XML Generated</p>
+                            <p class="mb-0" style="color:#10B981"><i class="bi bi-check2-all me-1"></i>Synced to Tally Prime!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5" style="background:white;margin-top:-50px;position:relative;z-index:3;border-radius:30px 30px 0 0">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat1">10,000+</div>
+                    <p class="text-muted mb-0">Invoices Processed</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">500+</div>
+                    <p class="text-muted mb-0">CAs & Firms</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">99.5%</div>
+                    <p class="text-muted mb-0">OCR Accuracy</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-number">80%</div>
+                    <p class="text-muted mb-0">Time Saved</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="section-padding" id="features" style="background:#F8FAFC">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="d-inline-block px-3 py-1 rounded-pill mb-3" style="background:rgba(79,70,229,0.1);color:#4F46E5;font-weight:600">
+                <i class="bi bi-stars me-1"></i> AI-Powered Features
+            </div>
+            <h2 class="section-title">Everything You Need to Automate Accounting</h2>
+            <p class="section-subtitle">From invoice scanning to Tally sync — our AI handles it all so you can focus on growing your practice.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="feature-card h-100">
+                    <div class="feature-icon" style="background:rgba(79,70,229,0.1);color:#4F46E5">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">PDF to Tally</h4>
+                    <p class="text-muted">Upload any invoice PDF and AI extracts all data — vendor, amounts, GST, and creates Tally entries automatically.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="feature-card h-100">
+                    <div class="feature-icon" style="background:rgba(16,185,129,0.1);color:#10B981">
+                        <i class="bi bi-cpu"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">AI Ledger Detection</h4>
+                    <p class="text-muted">AI intelligently classifies vendors — Swiggy to Food Expense, Amazon to Purchase, Petrol to Fuel, and more.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="feature-card h-100">
+                    <div class="feature-icon" style="background:rgba(245,158,11,0.1);color:#F59E0B">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Auto Voucher Creation</h4>
+                    <p class="text-muted">Automatically generates Sales, Purchase, Receipt, Payment, and Journal vouchers with correct debit-credit entries.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="feature-card h-100">
+                    <div class="feature-icon" style="background:rgba(239,68,68,0.1);color:#EF4444">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">GST Automation</h4>
+                    <p class="text-muted">Auto-detect GSTIN, HSN codes, tax percentages. Calculate CGST, SGST, IGST with inter/intra-state detection.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="feature-card h-100">
+                    <div class="feature-icon" style="background:rgba(139,92,246,0.1);color:#8B5CF6">
+                        <i class="bi bi-eye"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">OCR Engine</h4>
+                    <p class="text-muted">Dual OCR with PaddleOCR + Tesseract for 99.5% accuracy. Handles handwritten, scanned, and digital documents.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="feature-card h-100">
+                    <div class="feature-icon" style="background:rgba(6,182,212,0.1);color:#06B6D4">
+                        <i class="bi bi-chat-dots"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">AI Chatbot</h4>
+                    <p class="text-muted">Ask questions like "Show March GST report" or "Generate purchase summary" — AI gives instant answers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GST Section -->
+<section class="section-padding" id="gst" style="background:white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="d-inline-block px-3 py-1 rounded-pill mb-3" style="background:rgba(16,185,129,0.1);color:#10B981;font-weight:600">
+                    <i class="bi bi-percent me-1"></i> GST Compliance
+                </div>
+                <h2 class="section-title">Complete GST Automation</h2>
+                <p class="text-muted fs-5 mb-4">Never miss a GST detail again. Our AI automatically detects and calculates all GST components.</p>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div style="width:32px;height:32px;background:rgba(16,185,129,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">
+                                <i class="bi bi-check2 text-success"></i>
+                            </div>
+                            <span class="fw-medium">GSTIN Detection</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div style="width:32px;height:32px;background:rgba(16,185,129,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">
+                                <i class="bi bi-check2 text-success"></i>
+                            </div>
+                            <span class="fw-medium">HSN Code Lookup</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div style="width:32px;height:32px;background:rgba(16,185,129,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">
+                                <i class="bi bi-check2 text-success"></i>
+                            </div>
+                            <span class="fw-medium">CGST/SGST/IGST</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div style="width:32px;height:32px;background:rgba(16,185,129,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">
+                                <i class="bi bi-check2 text-success"></i>
+                            </div>
+                            <span class="fw-medium">GSTR-1/3B Reports</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div style="width:32px;height:32px;background:rgba(16,185,129,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">
+                                <i class="bi bi-check2 text-success"></i>
+                            </div>
+                            <span class="fw-medium">Export to PDF</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div style="width:32px;height:32px;background:rgba(16,185,129,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">
+                                <i class="bi bi-check2 text-success"></i>
+                            </div>
+                            <span class="fw-medium">Tax Rate Detection</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="glass-card-solid p-4">
+                    <h5 class="fw-bold mb-4"><i class="bi bi-bar-chart-fill text-primary me-2"></i>GST Summary - March 2025</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background:rgba(79,70,229,0.05)">
+                                <small class="text-muted">CGST</small>
+                                <h4 class="fw-bold mb-0" style="color:#4F46E5">₹1,24,500</h4>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background:rgba(16,185,129,0.05)">
+                                <small class="text-muted">SGST</small>
+                                <h4 class="fw-bold mb-0" style="color:#10B981">₹1,24,500</h4>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background:rgba(245,158,11,0.05)">
+                                <small class="text-muted">IGST</small>
+                                <h4 class="fw-bold mb-0" style="color:#F59E0B">₹45,800</h4>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3" style="background:rgba(239,68,68,0.05)">
+                                <small class="text-muted">Total GST</small>
+                                <h4 class="fw-bold mb-0" style="color:#EF4444">₹2,94,800</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress" style="height:12px;border-radius:6px;background:#E5E7EB">
+                        <div class="progress-bar" style="width:42%;background:#4F46E5;border-radius:6px 0 0 6px"></div>
+                        <div class="progress-bar" style="width:42%;background:#10B981"></div>
+                        <div class="progress-bar" style="width:16%;background:#F59E0B;border-radius:0 6px 6px 0"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-muted">CGST 42%</small>
+                        <small class="text-muted">SGST 42%</small>
+                        <small class="text-muted">IGST 16%</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tally Integration Section -->
+<section class="section-padding" id="tally" style="background:linear-gradient(135deg,#1E1B4B 0%,#312E81 100%)">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-white mb-4 mb-lg-0">
+                <div class="d-inline-block px-3 py-1 rounded-pill mb-3" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2)">
+                    <i class="bi bi-link-45deg me-1"></i> Seamless Integration
+                </div>
+                <h2 class="section-title gradient-text">Direct Tally Prime Integration</h2>
+                <p class="fs-5 mb-4" style="opacity:0.8">Connect directly with Tally Prime via XML API. Auto-create ledgers, vouchers, and sync GST entries in real-time.</p>
+                <div class="glass-card p-4 mb-4">
+                    <div style="font-family:monospace;font-size:0.85rem;color:#A78BFA">
+                        <p class="mb-1">&lt;ENVELOPE&gt;</p>
+                        <p class="mb-1">&nbsp;&nbsp;&lt;HEADER&gt;</p>
+                        <p class="mb-1">&nbsp;&nbsp;&nbsp;&nbsp;&lt;TALLYREQUEST&gt;<span style="color:#10B981">Import Data</span>&lt;/TALLYREQUEST&gt;</p>
+                        <p class="mb-1">&nbsp;&nbsp;&lt;/HEADER&gt;</p>
+                        <p class="mb-1">&nbsp;&nbsp;&lt;VOUCHER VCHTYPE="<span style="color:#F59E0B">Purchase</span>"&gt;</p>
+                        <p class="mb-1">&nbsp;&nbsp;&nbsp;&nbsp;&lt;PARTYLEDGERNAME&gt;<span style="color:#60A5FA">Amazon</span>&lt;/PARTYLEDGERNAME&gt;</p>
+                        <p class="mb-1">&nbsp;&nbsp;&nbsp;&nbsp;&lt;AMOUNT&gt;<span style="color:#10B981">24500.00</span>&lt;/AMOUNT&gt;</p>
+                        <p class="mb-0">&nbsp;&nbsp;&lt;/VOUCHER&gt;</p>
+                    </div>
+                </div>
+                <a href="/register" class="btn btn-primary-gradient"><i class="bi bi-plug me-2"></i>Connect Tally Now</a>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="glass-card p-4 text-white text-center">
+                            <i class="bi bi-journal-plus fs-1 mb-3 d-block" style="color:#818CF8"></i>
+                            <h6 class="fw-bold">Auto Ledgers</h6>
+                            <small style="opacity:0.7">Create ledgers automatically</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="glass-card p-4 text-white text-center">
+                            <i class="bi bi-receipt-cutoff fs-1 mb-3 d-block" style="color:#10B981"></i>
+                            <h6 class="fw-bold">Auto Vouchers</h6>
+                            <small style="opacity:0.7">Generate all voucher types</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="glass-card p-4 text-white text-center">
+                            <i class="bi bi-arrow-repeat fs-1 mb-3 d-block" style="color:#F59E0B"></i>
+                            <h6 class="fw-bold">Real-time Sync</h6>
+                            <small style="opacity:0.7">Instant push to Tally</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="glass-card p-4 text-white text-center">
+                            <i class="bi bi-file-earmark-code fs-1 mb-3 d-block" style="color:#EC4899"></i>
+                            <h6 class="fw-bold">XML Logs</h6>
+                            <small style="opacity:0.7">Full audit trail</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WhatsApp & Email Section -->
+<section class="section-padding" style="background:#F8FAFC">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">WhatsApp & Email Automation</h2>
+            <p class="section-subtitle">Send invoices via WhatsApp, auto-process email attachments, and create Tally entries — all hands-free.</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-5">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon mx-auto" style="background:rgba(37,211,102,0.1);color:#25D366">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">WhatsApp Automation</h4>
+                    <p class="text-muted">Send invoices via WhatsApp. Receive documents from clients and auto-process them into Tally entries.</p>
+                    <ul class="list-unstyled text-start mt-4">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Send invoices to clients</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Auto-receive documents</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>AI auto-processing</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Auto Tally sync</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon mx-auto" style="background:rgba(234,67,53,0.1);color:#EA4335">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Email Automation</h4>
+                    <p class="text-muted">Connect Gmail and let AI scan for invoice emails, download attachments, and process everything automatically.</p>
+                    <ul class="list-unstyled text-start mt-4">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Gmail API integration</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Auto-scan inbox</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Download attachments</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Auto PDF processing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="section-padding" id="pricing" style="background:white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="d-inline-block px-3 py-1 rounded-pill mb-3" style="background:rgba(79,70,229,0.1);color:#4F46E5;font-weight:600">
+                <i class="bi bi-tag me-1"></i> Simple Pricing
+            </div>
+            <h2 class="section-title">Choose Your Plan</h2>
+            <p class="section-subtitle">Start free and scale as you grow. No hidden charges.</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="pricing-card h-100">
+                    <h5 class="fw-bold mb-2">Starter</h5>
+                    <p class="text-muted mb-4">Perfect for individual CAs</p>
+                    <div class="mb-4">
+                        <span class="display-5 fw-900">Free</span>
+                    </div>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>50 Invoices/month</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>OCR Processing</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>AI Ledger Detection</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>GST Calculation</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>1 Company</li>
+                        <li class="mb-3 text-muted"><i class="bi bi-x-circle me-2"></i>Tally Integration</li>
+                        <li class="mb-3 text-muted"><i class="bi bi-x-circle me-2"></i>WhatsApp/Email</li>
+                    </ul>
+                    <a href="/register" class="btn btn-outline-primary w-100 py-3 rounded-3 fw-semibold">Get Started</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="pricing-card popular h-100">
+                    <div class="popular-badge">Most Popular</div>
+                    <h5 class="fw-bold mb-2">Professional</h5>
+                    <p class="text-muted mb-4">For growing CA firms</p>
+                    <div class="mb-4">
+                        <span class="display-5 fw-900">₹1,999</span>
+                        <span class="text-muted">/month</span>
+                    </div>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Unlimited Invoices</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Advanced OCR + AI</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>AI Ledger & Vouchers</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Full GST Reports</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>10 Companies</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Tally Integration</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>AI Chatbot</li>
+                    </ul>
+                    <a href="/register" class="btn btn-primary-gradient w-100 py-3 rounded-3">Start Free Trial</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 fade-up">
+                <div class="pricing-card h-100">
+                    <h5 class="fw-bold mb-2">Enterprise</h5>
+                    <p class="text-muted mb-4">For large organizations</p>
+                    <div class="mb-4">
+                        <span class="display-5 fw-900">₹4,999</span>
+                        <span class="text-muted">/month</span>
+                    </div>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Everything in Pro</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Unlimited Companies</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>WhatsApp Automation</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Email Automation</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>AI Fraud Detection</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Priority Support</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Custom Integrations</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline-dark w-100 py-3 rounded-3 fw-semibold">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="section-padding" id="testimonials" style="background:#F8FAFC">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">What Our Users Say</h2>
+            <p class="section-subtitle">Trusted by CAs and businesses across India.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 fade-up">
+                <div class="testimonial-card h-100">
+                    <div class="d-flex mb-3">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                    <p class="text-muted mb-4">"SmartTally AI reduced our invoice processing time by 80%. The AI ledger detection is incredibly accurate. It correctly maps 95% of vendors automatically."</p>
+                    <div class="d-flex align-items-center">
+                        <div style="width:48px;height:48px;background:var(--gradient-2);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;margin-right:12px">RP</div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Rajesh Patel, CA</h6>
+                            <small class="text-muted">Patel & Associates, Mumbai</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 fade-up">
+                <div class="testimonial-card h-100">
+                    <div class="d-flex mb-3">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                    <p class="text-muted mb-4">"The Tally integration is seamless. Upload PDF, AI processes it, and voucher appears in Tally within seconds. Saves us 4 hours daily on data entry."</p>
+                    <div class="d-flex align-items-center">
+                        <div style="width:48px;height:48px;background:linear-gradient(135deg,#10B981,#059669);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;margin-right:12px">SA</div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Sunita Agarwal</h6>
+                            <small class="text-muted">Tax Consultant, Delhi</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 fade-up">
+                <div class="testimonial-card h-100">
+                    <div class="d-flex mb-3">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <i class="bi bi-star-half text-warning"></i>
+                    </div>
+                    <p class="text-muted mb-4">"GST compliance was a nightmare. SmartTally AI auto-detects GSTIN, calculates tax breakup, and generates GSTR reports. Best investment for our firm."</p>
+                    <div class="d-flex align-items-center">
+                        <div style="width:48px;height:48px;background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;margin-right:12px">VK</div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Vikram Kumar</h6>
+                            <small class="text-muted">CFO, TechStart Pvt Ltd, Bangalore</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section-padding" id="contact" style="background:white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <h2 class="section-title">Get in Touch</h2>
+                <p class="text-muted fs-5 mb-4">Request a callback or schedule a demo. Our team will help you get started.</p>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div style="width:48px;height:48px;background:rgba(79,70,229,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                        <i class="bi bi-envelope-fill text-primary"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted">Email</small>
+                        <p class="mb-0 fw-medium">hello@smarttally.ai</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div style="width:48px;height:48px;background:rgba(16,185,129,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                        <i class="bi bi-telephone-fill text-success"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted">Phone</small>
+                        <p class="mb-0 fw-medium">+91 98765 43210</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width:48px;height:48px;background:rgba(245,158,11,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                        <i class="bi bi-geo-alt-fill text-warning"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted">Location</small>
+                        <p class="mb-0 fw-medium">Mumbai, India</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="glass-card-solid p-5">
+                    <form id="contactForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Full Name</label>
+                                <input type="text" class="form-input" placeholder="Your name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Email</label>
+                                <input type="email" class="form-input" placeholder="your@email.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Phone</label>
+                                <input type="tel" class="form-input" placeholder="+91 98765 43210">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Company</label>
+                                <input type="text" class="form-input" placeholder="Your company">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium">Message</label>
+                                <textarea class="form-input" rows="4" placeholder="Tell us about your requirements..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary-gradient w-100 py-3">
+                                    <i class="bi bi-send me-2"></i>Request Callback
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer style="background:linear-gradient(180deg,#1E1B4B,#0F0A2E);color:white;padding:80px 0 30px">
+    <div class="container">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width:40px;height:40px;background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-right:10px">
+                        <i class="bi bi-robot text-white"></i>
+                    </div>
+                    <span class="fw-bold fs-5">SmartTally AI</span>
+                </div>
+                <p style="opacity:0.7;line-height:1.8">AI-Powered Accounting, GST & Tally Automation Platform for CAs, Tax Professionals, and Businesses.</p>
+                <div class="d-flex gap-3 mt-3">
+                    <a href="#" style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none"><i class="bi bi-twitter"></i></a>
+                    <a href="#" style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none"><i class="bi bi-youtube"></i></a>
+                    <a href="#" style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="fw-bold mb-3">Product</h6>
+                <ul class="list-unstyled" style="opacity:0.7">
+                    <li class="mb-2"><a href="#features" class="text-white text-decoration-none">Features</a></li>
+                    <li class="mb-2"><a href="#pricing" class="text-white text-decoration-none">Pricing</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">API Docs</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Changelog</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="fw-bold mb-3">Company</h6>
+                <ul class="list-unstyled" style="opacity:0.7">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">About</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Blog</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Careers</a></li>
+                    <li class="mb-2"><a href="#contact" class="text-white text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="fw-bold mb-3">Legal</h6>
+                <ul class="list-unstyled" style="opacity:0.7">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Privacy</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Terms</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Security</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 class="fw-bold mb-3">Support</h6>
+                <ul class="list-unstyled" style="opacity:0.7">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Help Center</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Community</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Status</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr style="opacity:0.1">
+        <div class="d-flex flex-wrap justify-content-between align-items-center pt-3">
+            <small style="opacity:0.5">&copy; 2025 SmartTally AI. All rights reserved.</small>
+            <small style="opacity:0.5">Made with <i class="bi bi-heart-fill text-danger"></i> in India</small>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Scroll animation
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('mainNav');
+    if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+        nav.querySelectorAll('.nav-link, .navbar-brand span').forEach(el => el.style.color = '#1E1B4B');
+    } else {
+        nav.classList.remove('scrolled');
+        nav.querySelectorAll('.nav-link, .navbar-brand span').forEach(el => el.style.color = 'white');
+    }
+});
+
+// Contact form
+document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast('Thank you! We will get back to you soon.', 'success');
+    e.target.reset();
+});
+</script>
+{% endblock %}

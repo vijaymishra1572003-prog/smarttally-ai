@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - SmartTally AI{% endblock %}
+
+{% block content %}
+{% set active = 'dashboard' %}
+{% include "components/sidebar.html" %}
+
+<div class="main-content">
+    <!-- Top Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">Dashboard</h4>
+            <small class="text-muted">Welcome back! Here's your overview.</small>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm px-3 py-2 rounded-3" style="background:#F1F5F9" onclick="toggleTheme()">
+                <i class="bi bi-moon"></i>
+            </button>
+            <button class="btn btn-primary-gradient btn-sm px-3" onclick="window.location.href='/dashboard/processing'">
+                <i class="bi bi-upload me-1"></i> Upload Files
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4" id="statsRow">
+        <div class="col-6 col-lg-3">
+            <div class="dash-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-muted">Total Invoices</small>
+                        <h3 class="fw-bold mb-0" id="totalInvoices">0</h3>
+                    </div>
+                    <div class="stat-icon" style="background:rgba(79,70,229,0.1);color:#4F46E5"><i class="bi bi-receipt"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="dash-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-muted">Total GST</small>
+                        <h3 class="fw-bold mb-0" id="totalGst">₹0</h3>
+                    </div>
+                    <div class="stat-icon" style="background:rgba(16,185,129,0.1);color:#10B981"><i class="bi bi-percent"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="dash-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-muted">AI Processed</small>
+                        <h3 class="fw-bold mb-0" id="processedFiles">0</h3>
+                    </div>
+                    <div class="stat-icon" style="background:rgba(245,158,11,0.1);color:#F59E0B"><i class="bi bi-cpu"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="dash-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-muted">Tally Synced</small>
+                        <h3 class="fw-bold mb-0" id="syncedVouchers">0</h3>
+                    </div>
+                    <div class="stat-icon" style="background:rgba(139,92,246,0.1);color:#8B5CF6"><i class="bi bi-check2-all"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+            <div class="dash-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0">Revenue & GST Analytics</h6>
+                    <select class="form-select form-select-sm" style="width:auto" id="chartYear">
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+                <canvas id="revenueChart" height="250"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3">Processing Status</h6>
+                <canvas id="statusChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity & Error Logs -->
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>Recent Activities</h6>
+                <div id="activityList">
+                    <div class="text-center py-4 text-muted">
+                        <div class="spinner mx-auto mb-3"></div>
+                        Loading activities...
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3"><i class="bi bi-exclamation-triangle me-2 text-warning"></i>Error Logs</h6>
+                <div id="errorLogs">
+                    <div class="text-center py-4 text-muted">
+                        <div class="spinner mx-auto mb-3"></div>
+                        Loading logs...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const token = localStorage.getItem('access_token');
+if (!token) window.location.href = '/login';
+
+async function loadDashboard() {
+    try {
+        const res = await fetchAPI('/api/dashboard/stats');
+        document.getElementById('totalInvoices').textContent = res.total_invoices;
+        document.getElementById('totalGst').textContent = '₹' + res.total_gst.toLocaleString('en-IN');
+        document.getElementById('processedFiles').textContent = res.processed_files;
+        document.getElementById('syncedVouchers').textContent = res.synced_vouchers;
+    } catch (e) { console.log('Stats loading...', e); }
+
+    try {
+        const chartRes = await fetchAPI('/api/dashboard/charts/monthly-revenue?year=2025');
+        const labels = chartRes.chart_data.map(d => d.month);
+        const revenue = chartRes.chart_data.map(d => d.revenue);
+        const gst = chartRes.chart_data.map(d => d.gst);
+
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    { label: 'Revenue', data: revenue, backgroundColor: 'rgba(79,70,229,0.8)', borderRadius: 8 },
+                    { label: 'GST', data: gst, backgroundColor: 'rgba(16,185,129,0.8)', borderRadius: 8 }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+        });
+    } catch (e) {
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                datasets: [
+                    { label: 'Revenue', data: [45000,52000,48000,61000,55000,72000,68000,81000,76000,92000,88000,95000], backgroundColor: 'rgba(79,70,229,0.8)', borderRadius: 8 },
+                    { label: 'GST', data: [8100,9360,8640,10980,9900,12960,12240,14580,13680,16560,15840,17100], backgroundColor: 'rgba(16,185,129,0.8)', borderRadius: 8 }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+        });
+    }
+
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'Processing', 'Uploaded', 'Failed'],
+            datasets: [{ data: [65, 10, 20, 5], backgroundColor: ['#10B981','#F59E0B','#6366F1','#EF4444'], borderWidth: 0 }]
+        },
+        options: { responsive: true, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+    });
+
+    try {
+        const acts = await fetchAPI('/api/dashboard/recent-activity?limit=5');
+        const list = document.getElementById('activityList');
+        if (acts.activities && acts.activities.length > 0) {
+            list.innerHTML = acts.activities.map(a => `
+                <div class="d-flex align-items-center gap-3 p-2 rounded-3 mb-2" style="background:#F8FAFC">
+                    <div style="width:36px;height:36px;background:rgba(79,70,229,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center">
+                        <i class="bi bi-activity text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <small class="fw-medium d-block">${a.action}</small>
+                        <small class="text-muted">${new Date(a.created_at).toLocaleString()}</small>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            list.innerHTML = '<p class="text-muted text-center py-3">No recent activities. Upload a file to get started!</p>';
+        }
+    } catch (e) {
+        document.getElementById('activityList').innerHTML = '<p class="text-muted text-center py-3">Upload files to see activity.</p>';
+    }
+
+    try {
+        const errors = await fetchAPI('/api/dashboard/error-logs?per_page=5');
+        const errList = document.getElementById('errorLogs');
+        if (errors.logs && errors.logs.length > 0) {
+            errList.innerHTML = errors.logs.map(l => `
+                <div class="d-flex align-items-center gap-3 p-2 rounded-3 mb-2" style="background:#FEF2F2">
+                    <i class="bi bi-exclamation-circle text-danger"></i>
+                    <div class="flex-grow-1">
+                        <small class="fw-medium d-block">${l.action}</small>
+                        <small class="text-danger">${l.error_message || 'Unknown error'}</small>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            errList.innerHTML = '<p class="text-muted text-center py-3">No errors. Everything is running smoothly!</p>';
+        }
+    } catch (e) {
+        document.getElementById('errorLogs').innerHTML = '<p class="text-muted text-center py-3">No errors found.</p>';
+    }
+}
+
+loadDashboard();
+</script>
+{% endblock %}
