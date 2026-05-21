@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}GST Dashboard - SmartTally AI{% endblock %}
+
+{% block content %}
+{% set active = 'gst' %}
+{% include "components/sidebar.html" %}
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1"><i class="bi bi-percent me-2 text-success"></i>GST Dashboard</h4>
+            <small class="text-muted">Monitor GST compliance and generate reports</small>
+        </div>
+        <button class="btn btn-primary-gradient btn-sm" onclick="generateReport()">
+            <i class="bi bi-file-earmark-plus me-1"></i> Generate Report
+        </button>
+    </div>
+
+    <!-- GST Summary -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="dash-card text-center">
+                <small class="text-muted">CGST</small>
+                <h3 class="fw-bold mb-0" style="color:#4F46E5" id="gstCgst">₹0</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="dash-card text-center">
+                <small class="text-muted">SGST</small>
+                <h3 class="fw-bold mb-0" style="color:#10B981" id="gstSgst">₹0</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="dash-card text-center">
+                <small class="text-muted">IGST</small>
+                <h3 class="fw-bold mb-0" style="color:#F59E0B" id="gstIgst">₹0</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="dash-card text-center">
+                <small class="text-muted">Total GST</small>
+                <h3 class="fw-bold mb-0" style="color:#EF4444" id="gstTotal">₹0</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- GST Chart & Calculator -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-7">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3">GST Breakdown</h6>
+                <canvas id="gstChart" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3"><i class="bi bi-calculator me-2"></i>GST Calculator</h6>
+                <div class="mb-3">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" class="form-input" id="calcAmount" placeholder="Enter amount">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">GST Rate (%)</label>
+                    <select class="form-input" id="calcRate">
+                        <option value="5">5%</option>
+                        <option value="12">12%</option>
+                        <option value="18" selected>18%</option>
+                        <option value="28">28%</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Supply Type</label>
+                    <select class="form-input" id="calcType">
+                        <option value="intra">Intra-State (CGST + SGST)</option>
+                        <option value="inter">Inter-State (IGST)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary-gradient w-100 mb-3" onclick="calculateGST()">Calculate</button>
+                <div id="calcResult" class="d-none"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GST Reports -->
+    <div class="dash-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0">GST Reports</h6>
+            <div class="d-flex gap-2">
+                <select class="form-select form-select-sm" id="reportMonth" style="width:auto">
+                    <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+                    <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+                    <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+                    <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                </select>
+                <select class="form-select form-select-sm" id="reportYear" style="width:auto">
+                    <option value="2025">2025</option><option value="2024">2024</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>Report Type</th><th>Period</th><th>Taxable Value</th><th>Total Tax</th><th>Invoices</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="reportsTable">
+                    <tr><td colspan="7" class="text-center text-muted py-4">No reports generated yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const token = localStorage.getItem('access_token');
+if (!token) window.location.href = '/login';
+
+async function loadGST() {
+    try {
+        const summary = await fetchAPI('/api/gst/summary');
+        document.getElementById('gstCgst').textContent = '₹' + summary.total_cgst.toLocaleString('en-IN');
+        document.getElementById('gstSgst').textContent = '₹' + summary.total_sgst.toLocaleString('en-IN');
+        document.getElementById('gstIgst').textContent = '₹' + summary.total_igst.toLocaleString('en-IN');
+        document.getElementById('gstTotal').textContent = '₹' + summary.total_gst.toLocaleString('en-IN');
+
+        new Chart(document.getElementById('gstChart'), {
+            type: 'pie',
+            data: {
+                labels: ['CGST', 'SGST', 'IGST'],
+                datasets: [{ data: [summary.total_cgst || 42, summary.total_sgst || 42, summary.total_igst || 16], backgroundColor: ['#4F46E5', '#10B981', '#F59E0B'], borderWidth: 0 }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+    } catch (e) {
+        new Chart(document.getElementById('gstChart'), {
+            type: 'pie',
+            data: { labels: ['CGST', 'SGST', 'IGST'], datasets: [{ data: [42, 42, 16], backgroundColor: ['#4F46E5', '#10B981', '#F59E0B'], borderWidth: 0 }] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    try {
+        const reports = await fetchAPI('/api/gst/reports');
+        const tbody = document.getElementById('reportsTable');
+        if (reports.reports && reports.reports.length > 0) {
+            tbody.innerHTML = reports.reports.map(r => `
+                <tr>
+                    <td><span class="badge bg-primary">${r.report_type}</span></td>
+                    <td>${r.period_month}/${r.period_year}</td>
+                    <td>₹${r.total_taxable_value.toLocaleString('en-IN')}</td>
+                    <td>₹${r.total_tax.toLocaleString('en-IN')}</td>
+                    <td>${r.total_invoices}</td>
+                    <td><span class="badge ${r.status==='filed'?'bg-success':'bg-warning'}">${r.status}</span></td>
+                    <td><button class="btn btn-sm btn-outline-primary rounded-3" onclick="exportReport(${r.id})"><i class="bi bi-download"></i></button></td>
+                </tr>
+            `).join('');
+        }
+    } catch (e) { console.log('Loading reports...'); }
+}
+
+function calculateGST() {
+    const amount = parseFloat(document.getElementById('calcAmount').value);
+    const rate = parseFloat(document.getElementById('calcRate').value);
+    const type = document.getElementById('calcType').value;
+    const resultDiv = document.getElementById('calcResult');
+
+    if (!amount) return;
+
+    const gst = amount * rate / 100;
+    resultDiv.classList.remove('d-none');
+
+    if (type === 'intra') {
+        const half = gst / 2;
+        resultDiv.innerHTML = `
+            <div class="p-3 rounded-3" style="background:#F8FAFC">
+                <div class="d-flex justify-content-between mb-2"><span>Taxable Value</span><strong>₹${amount.toLocaleString('en-IN')}</strong></div>
+                <div class="d-flex justify-content-between mb-2"><span>CGST @${rate/2}%</span><strong class="text-primary">₹${half.toFixed(2)}</strong></div>
+                <div class="d-flex justify-content-between mb-2"><span>SGST @${rate/2}%</span><strong class="text-success">₹${half.toFixed(2)}</strong></div>
+                <hr>
+                <div class="d-flex justify-content-between"><span class="fw-bold">Total</span><strong class="fw-bold">₹${(amount+gst).toFixed(2)}</strong></div>
+            </div>`;
+    } else {
+        resultDiv.innerHTML = `
+            <div class="p-3 rounded-3" style="background:#F8FAFC">
+                <div class="d-flex justify-content-between mb-2"><span>Taxable Value</span><strong>₹${amount.toLocaleString('en-IN')}</strong></div>
+                <div class="d-flex justify-content-between mb-2"><span>IGST @${rate}%</span><strong class="text-warning">₹${gst.toFixed(2)}</strong></div>
+                <hr>
+                <div class="d-flex justify-content-between"><span class="fw-bold">Total</span><strong class="fw-bold">₹${(amount+gst).toFixed(2)}</strong></div>
+            </div>`;
+    }
+}
+
+async function generateReport() {
+    const month = parseInt(document.getElementById('reportMonth').value);
+    const year = parseInt(document.getElementById('reportYear').value);
+    try {
+        await fetchAPI('/api/gst/reports/generate', { method: 'POST', body: JSON.stringify({ month, year, report_type: 'GSTR3B' }) });
+        showToast('GST Report generated!', 'success');
+        loadGST();
+    } catch (e) { showToast('Error generating report', 'error'); }
+}
+
+async function exportReport(id) {
+    try {
+        const res = await fetch(`/api/export/gst-report/${id}/pdf`, { headers: {'Authorization': 'Bearer ' + token} });
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'gst_report.pdf'; a.click();
+    } catch (e) { showToast('Export error', 'error'); }
+}
+
+loadGST();
+</script>
+{% endblock %}

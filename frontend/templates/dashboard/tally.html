@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block title %}Tally Integration - SmartTally AI{% endblock %}
+
+{% block content %}
+{% set active = 'tally' %}
+{% include "components/sidebar.html" %}
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1"><i class="bi bi-link-45deg me-2 text-purple"></i>Tally Integration</h4>
+            <small class="text-muted">Connect and sync with Tally Prime</small>
+        </div>
+        <button class="btn btn-primary-gradient btn-sm" onclick="syncAll()">
+            <i class="bi bi-arrow-repeat me-1"></i> Sync All
+        </button>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-4">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3">Connection Status</h6>
+                <div class="text-center py-3" id="tallyStatus">
+                    <div class="spinner mx-auto mb-3"></div>
+                    <p class="text-muted">Checking connection...</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="dash-card text-center">
+                <h6 class="fw-bold mb-3">Sync Stats</h6>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="p-3 rounded-3" style="background:#F0FDF4">
+                            <h3 class="fw-bold text-success mb-0" id="syncedCount">0</h3>
+                            <small class="text-muted">Synced</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded-3" style="background:#FEF3C7">
+                            <h3 class="fw-bold text-warning mb-0" id="pendingCount">0</h3>
+                            <small class="text-muted">Pending</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3">Tally Config</h6>
+                <div class="mb-3">
+                    <label class="form-label">Tally URL</label>
+                    <input type="text" class="form-input" id="tallyUrl" value="http://localhost:9000">
+                </div>
+                <button class="btn btn-outline-primary w-100 rounded-3" onclick="testConnection()">
+                    <i class="bi bi-plug me-1"></i> Test Connection
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vouchers Pending Sync -->
+    <div class="dash-card mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0">Vouchers</h6>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary active" onclick="loadVouchers('all')">All</button>
+                <button class="btn btn-outline-secondary" onclick="loadVouchers('pending')">Pending</button>
+                <button class="btn btn-outline-secondary" onclick="loadVouchers('synced')">Synced</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>Type</th><th>Date</th><th>Party</th><th>Amount</th><th>Tally Status</th><th>Actions</th></tr></thead>
+                <tbody id="vouchersTable">
+                    <tr><td colspan="6" class="text-center text-muted py-4">No vouchers yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- XML Logs -->
+    <div class="dash-card">
+        <h6 class="fw-bold mb-3"><i class="bi bi-file-code me-2"></i>XML Sync Logs</h6>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>Action</th><th>Status</th><th>Error</th><th>Time</th></tr></thead>
+                <tbody id="tallyLogs">
+                    <tr><td colspan="4" class="text-center text-muted py-4">No sync logs yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const token = localStorage.getItem('access_token');
+if (!token) window.location.href = '/login';
+
+async function checkStatus() {
+    try {
+        const status = await fetchAPI('/api/tally/status');
+        const div = document.getElementById('tallyStatus');
+        div.innerHTML = status.connected ?
+            `<i class="bi bi-check-circle-fill text-success display-4 mb-2 d-block"></i><h5 class="text-success fw-bold">Connected</h5><small class="text-muted">${status.url}</small>` :
+            `<i class="bi bi-x-circle-fill text-danger display-4 mb-2 d-block"></i><h5 class="text-danger fw-bold">Disconnected</h5><small class="text-muted">${status.message}</small>`;
+    } catch (e) {
+        document.getElementById('tallyStatus').innerHTML = `<i class="bi bi-exclamation-circle text-warning display-4 mb-2 d-block"></i><h5 class="text-warning fw-bold">Unknown</h5><small class="text-muted">Could not check status</small>`;
+    }
+}
+
+async function testConnection() {
+    showToast('Testing connection...', 'info');
+    await checkStatus();
+}
+
+async function loadVouchers(filter) {
+    try {
+        let url = '/api/vouchers/';
+        if (filter === 'pending') url += '?tally_synced=false';
+        if (filter === 'synced') url += '?tally_synced=true';
+
+        const data = await fetchAPI(url);
+        const tbody = document.getElementById('vouchersTable');
+        let synced = 0, pending = 0;
+
+        if (data.vouchers && data.vouchers.length > 0) {
+            tbody.innerHTML = data.vouchers.map(v => {
+                if (v.tally_synced) synced++; else pending++;
+                return `
+                <tr>
+                    <td><span class="badge bg-primary">${v.voucher_type}</span></td>
+                    <td>${v.voucher_date || 'N/A'}</td>
+                    <td>${v.party_name || 'N/A'}</td>
+                    <td>₹${v.amount.toLocaleString('en-IN')}</td>
+                    <td>${v.tally_synced ? '<span class="badge bg-success">Synced</span>' : '<span class="badge bg-warning">Pending</span>'}</td>
+                    <td>
+                        ${!v.tally_synced ? `<button class="btn btn-sm btn-outline-success rounded-3" onclick="syncVoucher(${v.id})"><i class="bi bi-arrow-repeat"></i></button>` : ''}
+                        <button class="btn btn-sm btn-outline-primary rounded-3" onclick="viewXml(${v.id})"><i class="bi bi-code-slash"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+            document.getElementById('syncedCount').textContent = synced;
+            document.getElementById('pendingCount').textContent = pending;
+        }
+    } catch (e) { console.log('Loading vouchers...'); }
+}
+
+async function syncVoucher(id) {
+    try {
+        const res = await fetchAPI(`/api/tally/sync/voucher/${id}`, { method: 'POST' });
+        showToast(res.success ? 'Voucher synced!' : ('Sync failed: ' + (res.error || '')), res.success ? 'success' : 'error');
+        loadVouchers('all');
+        loadLogs();
+    } catch (e) { showToast('Sync error', 'error'); }
+}
+
+async function syncAll() {
+    try {
+        const res = await fetchAPI('/api/tally/sync/bulk', { method: 'POST', body: JSON.stringify({}) });
+        showToast(`Bulk sync: ${res.results.length} vouchers processed`, 'success');
+        loadVouchers('all');
+        loadLogs();
+    } catch (e) { showToast('Bulk sync error', 'error'); }
+}
+
+async function viewXml(id) {
+    try {
+        const data = await fetchAPI(`/api/vouchers/${id}`);
+        const xml = data.voucher.tally_xml || 'No XML generated';
+        const modal = document.createElement('div');
+        modal.innerHTML = `<div class="modal fade show" style="display:block;background:rgba(0,0,0,0.5)" onclick="this.remove()"><div class="modal-dialog modal-lg"><div class="modal-content" style="border-radius:16px" onclick="event.stopPropagation()"><div class="modal-header"><h5>Tally XML</h5><button class="btn-close" onclick="this.closest('.modal').remove()"></button></div><div class="modal-body"><pre style="background:#F8FAFC;padding:16px;border-radius:12px;max-height:500px;overflow:auto;font-size:0.8rem">${xml.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></div></div></div></div>`;
+        document.body.appendChild(modal);
+    } catch (e) { showToast('Error loading XML', 'error'); }
+}
+
+async function loadLogs() {
+    try {
+        const data = await fetchAPI('/api/tally/logs');
+        const tbody = document.getElementById('tallyLogs');
+        if (data.logs && data.logs.length > 0) {
+            tbody.innerHTML = data.logs.map(l => `
+                <tr>
+                    <td>${l.action}</td>
+                    <td><span class="badge ${l.status==='success'?'bg-success':'bg-danger'}">${l.status}</span></td>
+                    <td><small class="text-muted">${l.error_message || '-'}</small></td>
+                    <td><small>${new Date(l.created_at).toLocaleString()}</small></td>
+                </tr>
+            `).join('');
+        }
+    } catch (e) { console.log('Loading logs...'); }
+}
+
+checkStatus();
+loadVouchers('all');
+loadLogs();
+</script>
+{% endblock %}

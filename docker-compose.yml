@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=mysql+pymysql://smarttally:smarttally123@db:3306/smarttally_ai
+      - SECRET_KEY=${SECRET_KEY:-change-this-secret}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-change-this-jwt-secret}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - TALLY_URL=${TALLY_URL:-http://host.docker.internal:9000}
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=smarttally_ai
+      - MYSQL_USER=smarttally
+      - MYSQL_PASSWORD=smarttally123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  uploads:

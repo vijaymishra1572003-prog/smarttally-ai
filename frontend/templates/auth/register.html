@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Register - SmartTally AI{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="hero-blob blob-1"></div>
+    <div class="hero-blob blob-2"></div>
+    <div class="auth-card" style="max-width:500px">
+        <div class="text-center mb-4">
+            <div style="width:56px;height:56px;background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+                <i class="bi bi-person-plus text-white fs-4"></i>
+            </div>
+            <h3 class="fw-bold">Create Account</h3>
+            <p class="text-muted">Start your 14-day free trial</p>
+        </div>
+
+        <form id="registerForm">
+            <div class="mb-3">
+                <label class="form-label fw-medium">Full Name</label>
+                <input type="text" class="form-input" id="regName" placeholder="Your full name" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Email Address</label>
+                <input type="email" class="form-input" id="regEmail" placeholder="your@email.com" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Phone Number</label>
+                <input type="tel" class="form-input" id="regPhone" placeholder="+91 98765 43210">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Password</label>
+                <input type="password" class="form-input" id="regPassword" placeholder="Min. 8 characters" required minlength="8">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Role</label>
+                <select class="form-input" id="regRole">
+                    <option value="client_user">Business User</option>
+                    <option value="ca_admin">CA / Tax Professional</option>
+                    <option value="staff_user">Staff</option>
+                </select>
+            </div>
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" id="terms" required>
+                <label class="form-check-label" for="terms">I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a></label>
+            </div>
+            <button type="submit" class="btn btn-primary-gradient w-100 py-3 mb-3">
+                <i class="bi bi-rocket-takeoff me-2"></i>Create Account
+            </button>
+            <div id="regError" class="alert alert-danger d-none"></div>
+            <div id="regSuccess" class="alert alert-success d-none"></div>
+        </form>
+
+        <div class="text-center mt-4">
+            <p class="text-muted">Already have an account? <a href="/login" class="text-primary fw-semibold text-decoration-none">Sign In</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorDiv = document.getElementById('regError');
+    const successDiv = document.getElementById('regSuccess');
+
+    const body = {
+        full_name: document.getElementById('regName').value,
+        email: document.getElementById('regEmail').value,
+        phone: document.getElementById('regPhone').value,
+        password: document.getElementById('regPassword').value,
+        role: document.getElementById('regRole').value
+    };
+
+    try {
+        const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (res.ok) {
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            successDiv.classList.remove('d-none');
+            successDiv.textContent = 'Registration successful! Redirecting...';
+            errorDiv.classList.add('d-none');
+            setTimeout(() => window.location.href = '/dashboard', 1500);
+        } else {
+            errorDiv.classList.remove('d-none');
+            errorDiv.textContent = data.error || 'Registration failed';
+            successDiv.classList.add('d-none');
+        }
+    } catch (err) {
+        errorDiv.classList.remove('d-none');
+        errorDiv.textContent = 'Connection error. Please try again.';
+    }
+});
+</script>
+{% endblock %}

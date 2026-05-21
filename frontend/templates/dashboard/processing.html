@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}AI Processing - SmartTally AI{% endblock %}
+
+{% block content %}
+{% set active = 'processing' %}
+{% include "components/sidebar.html" %}
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1"><i class="bi bi-cpu me-2 text-primary"></i>AI Processing</h4>
+            <small class="text-muted">Upload documents and let AI extract data automatically</small>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3">Upload Documents</h6>
+                <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                    <input type="file" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.csv,.xlsx,.xls" style="display:none">
+                    <i class="bi bi-cloud-arrow-up display-4 text-primary mb-3 d-block"></i>
+                    <h5 class="fw-bold">Drag & Drop Files Here</h5>
+                    <p class="text-muted mb-2">or click to browse</p>
+                    <small class="text-muted">Supports: PDF, PNG, JPG, CSV, Excel (Max 50MB)</small>
+                </div>
+                <div id="fileList" class="mt-3"></div>
+                <button class="btn btn-primary-gradient mt-3 d-none" id="processBtn" onclick="processAllFiles()">
+                    <i class="bi bi-cpu me-2"></i>Process All Files with AI
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="dash-card mb-3">
+                <h6 class="fw-bold mb-3">Processing Flow</h6>
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#F0FDF4">
+                        <span class="badge bg-success rounded-circle" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center">1</span>
+                        <small class="fw-medium">Upload PDF/Image</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#EEF2FF">
+                        <span class="badge bg-primary rounded-circle" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center">2</span>
+                        <small class="fw-medium">OCR Processing</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#FEF3C7">
+                        <span class="badge bg-warning rounded-circle" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center">3</span>
+                        <small class="fw-medium">AI Data Extraction</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#F0F9FF">
+                        <span class="badge bg-info rounded-circle" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center">4</span>
+                        <small class="fw-medium">Ledger & GST Detection</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#FDF2F8">
+                        <span class="badge bg-danger rounded-circle" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center">5</span>
+                        <small class="fw-medium">Voucher Creation</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#F5F3FF">
+                        <span class="badge rounded-circle" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:#8B5CF6;color:white">6</span>
+                        <small class="fw-medium">Tally XML Generation</small>
+                    </div>
+                </div>
+            </div>
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3">Quick Stats</h6>
+                <div class="d-flex justify-content-between mb-2">
+                    <small class="text-muted">Files Today</small>
+                    <span class="fw-bold" id="filesToday">0</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <small class="text-muted">Processed</small>
+                    <span class="fw-bold text-success" id="processedToday">0</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">Pending</small>
+                    <span class="fw-bold text-warning" id="pendingToday">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OCR Preview & AI Results -->
+    <div class="row g-3 d-none" id="resultsSection">
+        <div class="col-lg-6">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3"><i class="bi bi-eye me-2"></i>OCR Preview</h6>
+                <pre id="ocrPreview" style="background:#F8FAFC;padding:16px;border-radius:12px;max-height:400px;overflow-y:auto;font-size:0.85rem;white-space:pre-wrap"></pre>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="dash-card">
+                <h6 class="fw-bold mb-3"><i class="bi bi-cpu me-2"></i>AI Extracted Data</h6>
+                <div id="aiResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uploaded Files Table -->
+    <div class="dash-card mt-4">
+        <h6 class="fw-bold mb-3">Uploaded Files</h6>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr><th>File</th><th>Type</th><th>Size</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="filesTable">
+                    <tr><td colspan="6" class="text-center text-muted py-4">No files uploaded yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const token = localStorage.getItem('access_token');
+if (!token) window.location.href = '/login';
+
+let uploadedFileIds = [];
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+['dragenter','dragover'].forEach(evt => {
+    dropZone.addEventListener(evt, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+});
+['dragleave','drop'].forEach(evt => {
+    dropZone.addEventListener(evt, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+});
+dropZone.addEventListener('drop', (e) => { handleFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', (e) => { handleFiles(e.target.files); });
+
+async function handleFiles(files) {
+    const fileList = document.getElementById('fileList');
+    const processBtn = document.getElementById('processBtn');
+
+    for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const item = document.createElement('div');
+        item.className = 'd-flex align-items-center gap-3 p-3 rounded-3 mb-2';
+        item.style.background = '#F8FAFC';
+        item.innerHTML = `
+            <i class="bi bi-file-earmark text-primary fs-5"></i>
+            <div class="flex-grow-1">
+                <small class="fw-medium d-block">${file.name}</small>
+                <small class="text-muted">${(file.size/1024).toFixed(1)} KB</small>
+            </div>
+            <div class="spinner" style="width:20px;height:20px;border-width:2px"></div>
+        `;
+        fileList.appendChild(item);
+
+        try {
+            const res = await fetch('/api/upload/', {
+                method: 'POST',
+                headers: {'Authorization': 'Bearer ' + token},
+                body: formData
+            });
+            const data = await res.json();
+            if (res.ok) {
+                uploadedFileIds.push(data.file.id);
+                item.querySelector('.spinner').outerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+            } else {
+                item.querySelector('.spinner').outerHTML = '<i class="bi bi-x-circle-fill text-danger"></i>';
+            }
+        } catch (e) {
+            item.querySelector('.spinner').outerHTML = '<i class="bi bi-x-circle-fill text-danger"></i>';
+        }
+    }
+
+    if (uploadedFileIds.length > 0) processBtn.classList.remove('d-none');
+    loadFiles();
+}
+
+async function processAllFiles() {
+    const resultsSection = document.getElementById('resultsSection');
+    resultsSection.classList.remove('d-none');
+
+    for (const fileId of uploadedFileIds) {
+        try {
+            const res = await fetchAPI(`/api/process/${fileId}`, { method: 'POST' });
+
+            if (res.ocr_preview) {
+                document.getElementById('ocrPreview').textContent = res.ocr_preview;
+            }
+
+            if (res.invoice) {
+                const inv = res.invoice;
+                document.getElementById('aiResults').innerHTML = `
+                    <div class="row g-2">
+                        <div class="col-6"><div class="p-2 rounded-3" style="background:#F8FAFC"><small class="text-muted d-block">Invoice No</small><strong>${inv.invoice_number || 'N/A'}</strong></div></div>
+                        <div class="col-6"><div class="p-2 rounded-3" style="background:#F8FAFC"><small class="text-muted d-block">Date</small><strong>${inv.invoice_date || 'N/A'}</strong></div></div>
+                        <div class="col-6"><div class="p-2 rounded-3" style="background:#F8FAFC"><small class="text-muted d-block">Vendor</small><strong>${inv.vendor_name || 'N/A'}</strong></div></div>
+                        <div class="col-6"><div class="p-2 rounded-3" style="background:#F8FAFC"><small class="text-muted d-block">GSTIN</small><strong>${inv.vendor_gstin || 'N/A'}</strong></div></div>
+                        <div class="col-4"><div class="p-2 rounded-3" style="background:#F0FDF4"><small class="text-muted d-block">CGST</small><strong class="text-success">₹${inv.cgst}</strong></div></div>
+                        <div class="col-4"><div class="p-2 rounded-3" style="background:#F0FDF4"><small class="text-muted d-block">SGST</small><strong class="text-success">₹${inv.sgst}</strong></div></div>
+                        <div class="col-4"><div class="p-2 rounded-3" style="background:#F0FDF4"><small class="text-muted d-block">IGST</small><strong class="text-success">₹${inv.igst}</strong></div></div>
+                        <div class="col-6"><div class="p-2 rounded-3" style="background:#EEF2FF"><small class="text-muted d-block">Total</small><strong class="text-primary">₹${inv.total_amount}</strong></div></div>
+                        <div class="col-6"><div class="p-2 rounded-3" style="background:#FEF3C7"><small class="text-muted d-block">Ledger</small><strong>${inv.ledger_category || 'N/A'}</strong></div></div>
+                        <div class="col-12"><div class="p-2 rounded-3" style="background:#F5F3FF"><small class="text-muted d-block">Voucher Type</small><strong>${inv.voucher_type || 'N/A'}</strong></div></div>
+                    </div>
+                `;
+            }
+            showToast('File processed successfully!', 'success');
+        } catch (e) {
+            showToast('Processing error: ' + e.message, 'error');
+        }
+    }
+    uploadedFileIds = [];
+    loadFiles();
+}
+
+async function loadFiles() {
+    try {
+        const data = await fetchAPI('/api/upload/');
+        const tbody = document.getElementById('filesTable');
+        if (data.files && data.files.length > 0) {
+            tbody.innerHTML = data.files.map(f => `
+                <tr>
+                    <td><i class="bi bi-file-earmark me-2 text-primary"></i>${f.original_filename}</td>
+                    <td><span class="badge bg-light text-dark">${f.file_type.toUpperCase()}</span></td>
+                    <td>${(f.file_size/1024).toFixed(1)} KB</td>
+                    <td><span class="badge ${f.status==='completed'?'bg-success':f.status==='failed'?'bg-danger':f.status==='processing'?'bg-warning':'bg-secondary'}">${f.status}</span></td>
+                    <td><small>${new Date(f.created_at).toLocaleString()}</small></td>
+                    <td>
+                        ${f.status==='uploaded'?`<button class="btn btn-sm btn-outline-primary rounded-3" onclick="processFile(${f.id})"><i class="bi bi-cpu"></i></button>`:''}
+                        <button class="btn btn-sm btn-outline-danger rounded-3" onclick="deleteFile(${f.id})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    } catch (e) { console.log('Loading files...'); }
+}
+
+async function processFile(id) {
+    try {
+        await fetchAPI(`/api/process/${id}`, { method: 'POST' });
+        showToast('File processed!', 'success');
+        loadFiles();
+    } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function deleteFile(id) {
+    if (!confirm('Delete this file?')) return;
+    try {
+        await fetchAPI(`/api/upload/${id}`, { method: 'DELETE' });
+        showToast('File deleted', 'success');
+        loadFiles();
+    } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+loadFiles();
+</script>
+{% endblock %}

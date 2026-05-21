@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Login - SmartTally AI{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="hero-blob blob-1"></div>
+    <div class="hero-blob blob-2"></div>
+    <div class="auth-card">
+        <div class="text-center mb-4">
+            <div style="width:56px;height:56px;background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+                <i class="bi bi-robot text-white fs-4"></i>
+            </div>
+            <h3 class="fw-bold">Welcome Back</h3>
+            <p class="text-muted">Sign in to your SmartTally AI account</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="mb-3">
+                <label class="form-label fw-medium">Email Address</label>
+                <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Password</label>
+                <div class="position-relative">
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required>
+                    <button type="button" class="btn btn-sm position-absolute" style="right:10px;top:50%;transform:translateY(-50%)" onclick="togglePassword('loginPassword')">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="remember">
+                    <label class="form-check-label" for="remember">Remember me</label>
+                </div>
+                <a href="/forgot-password" class="text-primary text-decoration-none fw-medium">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary-gradient w-100 py-3 mb-3">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+            </button>
+            <div id="loginError" class="alert alert-danger d-none"></div>
+        </form>
+
+        <div class="text-center mt-4">
+            <p class="text-muted">Don't have an account? <a href="/register" class="text-primary fw-semibold text-decoration-none">Sign Up</a></p>
+        </div>
+
+        <div class="text-center mt-3 p-3 rounded-3" style="background:#F8FAFC">
+            <small class="text-muted">Demo: admin@smarttally.ai / admin123</small>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorDiv = document.getElementById('loginError');
+
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, password})
+        });
+        const data = await res.json();
+        if (res.ok) {
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            window.location.href = '/dashboard';
+        } else {
+            errorDiv.classList.remove('d-none');
+            errorDiv.textContent = data.error || 'Login failed';
+        }
+    } catch (err) {
+        errorDiv.classList.remove('d-none');
+        errorDiv.textContent = 'Connection error. Please try again.';
+    }
+});
+
+function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+</script>
+{% endblock %}
