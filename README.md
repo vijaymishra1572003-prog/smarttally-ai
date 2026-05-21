@@ -92,8 +92,8 @@ python run.py
 The app will be available at `http://localhost:5000`
 
 ### Default Admin Credentials
-- **Email:** admin@smarttally.ai
-- **Password:** admin123
+- **Email:**
+- **Password:*
 
 ---
 
